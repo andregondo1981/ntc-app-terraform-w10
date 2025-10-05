@@ -34,7 +34,7 @@ resource "aws_security_group" "web_sg" {
   vpc_id      = aws_vpc.my-vpc.id
 
   # tfsec:ignore:AWS002
-  
+
   ingress {
     description = "Allow HTTP"
     from_port   = 80
