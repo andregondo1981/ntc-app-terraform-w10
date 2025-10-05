@@ -36,7 +36,7 @@ jobs:
 
       # Run Terraform security scan with tfsec
       - name: Run tfsec (Terraform Security Scanner)
-        uses: aquasecurity/tfsec-action@v1.0.3
+        uses: aquasecurity/tfsec-action@v1.0.5
 
       # Setup infracost
       - name: Setup Infracost
