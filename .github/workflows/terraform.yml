@@ -1,27 +1,18 @@
 name: Terraform CI/CD
 
-# When to run the workflow
 on:
   pull_request:
     branches: [ main ]
   push:
     branches: [ main ]
+
 jobs:
-  infracost:
+  terraform:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1   # change to your region
-          # Debug step: confirm AWS creds are loaded
-      - name: Debug AWS credentials
-        run: aws sts get-caller-identity
-
+      
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
@@ -34,25 +25,21 @@ jobs:
       - name: Convert Terraform plan to JSON
         run: terraform show -json tfplan.binary > plan.json
 
-      # Run Terraform security scan with tfsec
+      # TFSEC scan
       - name: Run tfsec (Terraform Security Scanner)
         uses: aquasecurity/tfsec-action@v1.0.3
 
-
-      # Setup infracost
+      # Setup Infracost
       - name: Setup Infracost
         uses: infracost/actions/setup@v2
         with:
           version: latest
 
-      # Run infracost breakdown
       - name: Run Infracost breakdown
         run: infracost breakdown --path plan.json --format json --out-file infracost.json
 
-      # Post infracost comment
       - name: Post Infracost comment
         uses: infracost/actions/comment@v1
         with:
           path: infracost.json
           github-token: ${{ github.token }}
-
