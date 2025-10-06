@@ -46,19 +46,17 @@ jobs:
           soft-fail: false    # fail workflow on violations
 
       # 7️⃣ Setup Infracost CLI
-      - name: Setup Infracost
-        uses: infracost/actions/setup@v2
-        with:
-          version: latest
+      #- name: Setup Infracost
+      #  uses: infracost/actions/setup@v2
+      #  with:
+      #    version: latest
 
       # 8️⃣ Run Infracost breakdown
-      - name: Run Infracost breakdown (local mode)
-        run: infracost breakdown --path plan.json --format json --out-file infracost.json --no-api
+      #- name: Run Infracost breakdown (local mode)
+      #  run: infracost breakdown --path plan.json --format json --out-file infracost.json --no-api
 
 
       # 9️⃣ Post Infracost comment
-      - name: Post Infracost comment
-        uses: infracost/actions/comment@v1
-        with:
-          path: infracost.json
+      #- name: Post Infracost comment
+      #   path: infracost.json
           github-token: ${{ github.token }}
