@@ -52,8 +52,9 @@ jobs:
           version: latest
 
       # 8️⃣ Run Infracost breakdown
-      - name: Run Infracost breakdown
-        run: infracost breakdown --path plan.json --format json --out-file infracost.json
+      - name: Run Infracost breakdown (local mode)
+        run: infracost breakdown --path plan.json --format json --out-file infracost.json --no-api
+
 
       # 9️⃣ Post Infracost comment
       - name: Post Infracost comment
