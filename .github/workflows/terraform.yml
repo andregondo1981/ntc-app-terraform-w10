@@ -42,7 +42,7 @@ jobs:
       - name: Run Checkov scan
         uses: bridgecrewio/checkov-action@v9
         with:
-          directory: ./       # adjust if your Terraform code is in a subfolder
+          directory: ./c/Users/timmy/week10/ntc-app-terraform-w10      # adjust if your Terraform code is in a subfolder
           soft-fail: false    # fail workflow on violations
 
       # 7️⃣ Setup Infracost CLI
