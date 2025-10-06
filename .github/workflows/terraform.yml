@@ -14,34 +14,48 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_REGION: ${{ secrets.AWS_REGION }}
     steps:
+      # 1️⃣ Checkout repo
       - name: Checkout repo
         uses: actions/checkout@v4
-      
+
+      # 2️⃣ Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v2
 
+      # 3️⃣ Terraform init
       - name: Terraform init
         run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
 
+      # 4️⃣ Terraform plan
       - name: Terraform plan
         run: terraform plan -out=tfplan.binary
 
+      # 5️⃣ Convert plan to JSON for Infracost
       - name: Convert Terraform plan to JSON
         run: terraform show -json tfplan.binary > plan.json
 
-      # TFSEC scan
-      - name: Run tfsec (Terraform Security Scanner)
-        uses: aquasecurity/tfsec-action@v1.0.3
+      # 6️⃣ Run Checkov security scan
+      - name: Run Checkov scan
+        uses: bridgecrewio/checkov-action@v9
+        with:
+          directory: ./       # adjust if your Terraform code is in a subfolder
+          soft-fail: false    # fail workflow on violations
 
-      # Setup Infracost
+      # 7️⃣ Setup Infracost CLI
       - name: Setup Infracost
         uses: infracost/actions/setup@v2
         with:
           version: latest
 
+      # 8️⃣ Run Infracost breakdown
       - name: Run Infracost breakdown
         run: infracost breakdown --path plan.json --format json --out-file infracost.json
 
+      # 9️⃣ Post Infracost comment
       - name: Post Infracost comment
         uses: infracost/actions/comment@v1
         with:
